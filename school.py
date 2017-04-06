@@ -90,13 +90,3 @@ class School(object):
         for _ in range(0, self.num_of_teachers + 1):
             teacher = Teacher()
             self.teachers[teacher.name] = 'data TBA'
-
-
-# For initial testing
-print(' ')
-school = School()
-print(school.school_name)
-print(school.student_num)
-print(school.students)
-print(school.teachers)
-print('\n')
