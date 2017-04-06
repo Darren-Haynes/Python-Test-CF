@@ -33,8 +33,28 @@ class Teacher(Person):
 class Student(Person):
     """Create students for the school"""
 
+    e_grades = ['K', 1, 2, 3, 4, 5]
+    m_grades = [6, 7, 8]
+    h_grades = [9, 10, 11, 12]
+
     def __init__(self):
         Person.__init__(self)
+
+    def get_data(self):
+        data = {}
+        grade = self.get_grade(self)
+        data['grade'] = grade
+        return data
+
+    def get_grade(self, school_name):
+        """Assign a grade to each student"""
+
+        if school_name == 'Elementary':
+            return choice(self.e_grades)
+        elif school_name == 'Middle':
+            return choice(self.m_grades)
+        else:
+            return choice(self.h_grades)
 
 
 class School(object):
@@ -48,15 +68,15 @@ class School(object):
 
         # Create dict of random number of students
         self.students = {}
-        self.num_of_students = randint(100, 601)
-        for _ in range(0, self.num_of_students):
+        self.student_num = randint(100, 601)
+        for _ in range(0, self.student_num):
             student = Student()
-            self.students[student.name] = 'data TBA'
+            self.students[student.name] = student.get_data()
 
         # Create dict of teachers
         self.teachers = {}
         # Create 1 teacher for every 10 students
-        self.num_of_teachers = self.num_of_students // 10 + 1
+        self.num_of_teachers = self.student_num // 10 + 1
         for _ in range(0, self.num_of_teachers + 1):
             teacher = Teacher()
             self.teachers[teacher.name] = 'data TBA'
@@ -66,7 +86,7 @@ class School(object):
 print(' ')
 school = School()
 print(school.school_name)
-print(school.num_of_students)
+print(school.student_num)
 print(school.students)
 print(school.teachers)
 print('\n')
