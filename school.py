@@ -40,18 +40,18 @@ class Student(Person):
     def __init__(self):
         Person.__init__(self)
 
-    def get_data(self):
+    def get_data(self, school_type):
         data = {}
-        grade = self.get_grade(self)
+        grade = self.get_grade(school_type)
         data['grade'] = grade
         return data
 
-    def get_grade(self, school_name):
+    def get_grade(self, school_type):
         """Assign a grade to each student"""
 
-        if school_name == 'Elementary':
+        if school_type == 'Elementary':
             return choice(self.e_grades)
-        elif school_name == 'Middle':
+        elif school_type == 'Middle':
             return choice(self.m_grades)
         else:
             return choice(self.h_grades)
@@ -71,7 +71,7 @@ class School(object):
         self.student_num = randint(100, 601)
         for _ in range(0, self.student_num):
             student = Student()
-            self.students[student.name] = student.get_data()
+            self.students[student.name] = student.get_data(self.school_type)
 
         # Create dict of teachers
         self.teachers = {}
