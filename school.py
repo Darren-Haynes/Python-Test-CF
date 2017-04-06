@@ -44,6 +44,7 @@ class Student(Person):
         data = {}
         grade = self.get_grade(school_type)
         data['grade'] = grade
+        data['gpa'] = self.get_gpa(school_type)
         return data
 
     def get_grade(self, school_type):
@@ -55,6 +56,15 @@ class Student(Person):
             return choice(self.m_grades)
         else:
             return choice(self.h_grades)
+
+    def get_gpa(self, school_type):
+        """Assign gpa to high school students only. Middle and Elementary
+           School students are given a gpa value of 'NA'"""
+
+        if school_type == 'High':
+            return randint(50, 101)
+        else:
+            return 'NA'
 
 
 class School(object):
