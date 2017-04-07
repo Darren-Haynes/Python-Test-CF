@@ -77,10 +77,10 @@ class School(object):
         self.school_type = choice(school_types)
         self.school_name = fake.street_name() + " " + self.school_type
         self.student_num = randint(100, 601)
-        self.students = self.get_students()
-        self.teachers = self.get_teachers()
+        self.students = self.__get_students()
+        self.teachers = self.__get_teachers()
 
-    def get_students(self):
+    def __get_students(self):
         """Use Student() class to create a random number of students"""
         students = {}
         for _ in range(0, self.student_num):
@@ -88,7 +88,7 @@ class School(object):
             students[student.name] = student.get_data(self.school_type)
         return students
 
-    def get_teachers(self):
+    def __get_teachers(self):
         """Use Teachers() class to create 10 students for each teacher"""
         teachers = {}
         # Create 1 teacher for every 10 students
