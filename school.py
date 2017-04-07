@@ -8,9 +8,10 @@ and its teachers and students.
 Designed for Python 3 and Python 2 compatability
 """
 
-from faker import Faker
+from collections import Counter
 from random import choice
 from random import randint
+from faker import Faker
 
 
 class Person(object):
@@ -75,18 +76,26 @@ class School(object):
         school_types = ['Elementary', 'High', 'Middle']
         self.school_type = choice(school_types)
         self.school_name = fake.street_name() + " " + self.school_type
+        self.student_num = randint(100, 601)
+        self.students = self.get_students()
+        self.teachers = self.get_teachers()
 
         # Create dict of random number of students
-        self.students = {}
-        self.student_num = randint(100, 601)
+
+    def get_students(self):
+        """Use Student() class to create a random number of students"""
+        students = {}
         for _ in range(0, self.student_num):
             student = Student()
-            self.students[student.name] = student.get_data(self.school_type)
+            students[student.name] = student.get_data(self.school_type)
+        return students
 
-        # Create dict of teachers
-        self.teachers = {}
+    def get_teachers(self):
+        """Use Teachers() class to create 10 students for each teacher"""
+        teachers = {}
         # Create 1 teacher for every 10 students
         self.num_of_teachers = self.student_num // 10 + 1
         for _ in range(0, self.num_of_teachers + 1):
             teacher = Teacher()
-            self.teachers[teacher.name] = 'data TBA'
+            teachers[teacher.name] = 'data TBA'
+        return teachers
