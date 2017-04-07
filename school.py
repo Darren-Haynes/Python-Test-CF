@@ -80,8 +80,6 @@ class School(object):
         self.students = self.get_students()
         self.teachers = self.get_teachers()
 
-        # Create dict of random number of students
-
     def get_students(self):
         """Use Student() class to create a random number of students"""
         students = {}
