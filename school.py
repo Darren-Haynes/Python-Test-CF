@@ -1,3 +1,4 @@
+
 """
 This module creates a school. The school is given a name plus students and
 teachers that are members of that school.
@@ -8,7 +9,6 @@ and its teachers and students.
 Designed for Python 3 and Python 2 compatability
 """
 
-from collections import Counter
 from random import choice
 from random import randint
 from faker import Faker
@@ -78,22 +78,53 @@ class School(object):
         self.school_name = fake.street_name() + " " + self.school_type
         self.student_num = randint(100, 601)
         self.students = self.__get_students()
+        students_per_grade = self.__grades_for_creating_teachers()
         self.teachers = self.__get_teachers()
 
     def __get_students(self):
         """Use Student() class to create a random number of students"""
         students = {}
-        for _ in range(0, self.student_num):
-            student = Student()
+        for _ in range(1, self.student_num + 1):
+            student = self.__no_duplicate_students(students)
             students[student.name] = student.get_data(self.school_type)
         return students
 
+    def __no_duplicate_students(self, students):
+        """ Recursive function that tests if student already exists in
+            'student' dictionary. If so then that student is not returned and
+            a new one created. This is to stop a duplicate student name
+            overriding an existing entry in dictionary 'students'. Such an
+            override reduces the number of students in 'students' and this
+            creates a disparity between the 'self.num_of_students' and actual
+            num of students in 'students' dictionary."""
+        student = Student()
+        if student.name in students:
+            return self.__no_duplicate_students(students)
+        else:
+            return student
+
     def __get_teachers(self):
-        """Use Teachers() class to create 10 students for each teacher"""
+        """Use Teachers() class to create 1 teacher for every 10 students in
+           each grade"""
+
+        teacher_grade = self.__grades_for_creating_teachers()
         teachers = {}
-        # Create 1 teacher for every 10 students
-        self.num_of_teachers = self.student_num // 10 + 1
-        for _ in range(0, self.num_of_teachers + 1):
-            teacher = Teacher()
-            teachers[teacher.name] = 'data TBA'
+        # Create 1 teacher for every 10 students of each grade
+        for grade in teacher_grade:
+            num_of_teachers = teacher_grade[grade] // 10 + 1
+            for _ in range(1, num_of_teachers + 1):
+                teacher = Teacher()
+                teachers[teacher.name] = {'grade': grade}
         return teachers
+
+    def __grades_for_creating_teachers(self):
+        """Before actually creating teachers for students, we need to count
+           how many students are in each grade. Each teacher teaches a
+           specific grade, so we need these numbers"""
+
+        # key is the grade, value is how many students for each grade
+        count = {}
+        for value in self.students.values():
+            k = value['grade']
+            count[k] = count.get(value['grade'], 0) + 1
+        return count
