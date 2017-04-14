@@ -36,14 +36,14 @@ class Student(Person):
     m_grades = [6, 7, 8]
     h_grades = [9, 10, 11, 12]
 
-    def get_data(self, school_type):
+    def create_data(self, school_type):
         data = {}
-        grade = self.get_grade(school_type)
+        grade = self.create_grade(school_type)
         data['grade'] = grade
-        data['gpa'] = self.get_gpa(school_type)
+        data['gpa'] = self.create_gpa(school_type)
         return data
 
-    def get_grade(self, school_type):
+    def create_grade(self, school_type):
         """Assign a grade to each student"""
 
         if school_type == 'Elementary':
@@ -53,7 +53,7 @@ class Student(Person):
         else:
             return choice(self.h_grades)
 
-    def get_gpa(self, school_type):
+    def create_gpa(self, school_type):
         """Assign gpa to high school students only. Middle and Elementary
            School students are given a gpa value of 'NA'"""
 
@@ -72,15 +72,15 @@ class School(object):
         self.school_type = choice(school_types)
         self.school_name = fake.street_name() + " " + self.school_type
         self.student_num = randint(100, 601)
-        self.students = self.__get_students()
-        self.teachers = self.__get_teachers()
+        self.students = self.__create_students()
+        self.teachers = self.__create_teachers()
 
-    def __get_students(self):
+    def __create_students(self):
         """Use Student() class to create a random number of students"""
         students = {}
         for _ in range(1, self.student_num + 1):
             student = self.__no_duplicate_students(students)
-            students[student.name] = student.get_data(self.school_type)
+            students[student.name] = student.create_data(self.school_type)
         return students
 
     def __no_duplicate_students(self, students):
@@ -97,7 +97,7 @@ class School(object):
         else:
             return student
 
-    def __get_teachers(self):
+    def __create_teachers(self):
         """Use Teachers() class to create 1 teacher for every 10 students in
            each grade"""
 
