@@ -13,22 +13,20 @@ from random import choice
 from random import randint
 from faker import Faker
 
+FAKE = Faker()
+
 
 class Person(object):
     """Top level hierarchy for subclasses Teacher() and Student()."""
 
     def __init__(self):
-        fake = Faker()
-        first = fake.first_name()
-        last = fake.last_name()
+        first = FAKE.first_name()
+        last = FAKE.last_name()
         self.name = first + " " + last
 
 
 class Teacher(Person):
     """Create teachers for the school"""
-
-    def __init__(self):
-        Person.__init__(self)
 
 
 class Student(Person):
@@ -37,9 +35,6 @@ class Student(Person):
     e_grades = ['K', 1, 2, 3, 4, 5]
     m_grades = [6, 7, 8]
     h_grades = [9, 10, 11, 12]
-
-    def __init__(self):
-        Person.__init__(self)
 
     def get_data(self, school_type):
         data = {}
@@ -78,7 +73,6 @@ class School(object):
         self.school_name = fake.street_name() + " " + self.school_type
         self.student_num = randint(100, 601)
         self.students = self.__get_students()
-        students_per_grade = self.__grades_for_creating_teachers()
         self.teachers = self.__get_teachers()
 
     def __get_students(self):
