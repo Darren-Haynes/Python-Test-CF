@@ -58,17 +58,16 @@ class Teacher(Person):
 class Student(Person):
     """Create students for the school"""
 
-    e_grades = ['K', 1, 2, 3, 4, 5]
-    m_grades = [6, 7, 8]
-    h_grades = [9, 10, 11, 12]
-
-    def create_students(self, school_type):
+    def create_students(self, grade_range):
         """Use Student() class to create a random number of students"""
         students = {}
         student_num = randint(100, 601)
         for _ in range(1, student_num + 1):
             student = self.__no_duplicate_students(students)
-            students[student.create_name()] = student.create_data(school_type)
+            name = student.create_name()
+            grade = self.create_grade(grade_range)
+            gpa = self.create_gpa(grade_range)
+            students[name] = {'grade': grade, 'gpa': gpa}
         return students
 
     def __no_duplicate_students(self, students):
@@ -85,43 +84,65 @@ class Student(Person):
         else:
             return student
 
-    def create_data(self, school_type):
-        data = {}
-        grade = self.create_grade(school_type)
-        data['grade'] = grade
-        data['gpa'] = self.create_gpa(school_type)
-        return data
+    def create_grade(self, grade_range):
+        """ Returns random grade to assign to student"""
+        return (choice(grade_range))
 
-    def create_grade(self, school_type):
-        """Assign a grade to each student"""
-
-        if school_type == 'Elementary':
-            return choice(self.e_grades)
-        elif school_type == 'Middle':
-            return choice(self.m_grades)
-        else:
-            return choice(self.h_grades)
-
-    def create_gpa(self, school_type):
+    def create_gpa(self, grade_range):
         """Assign gpa to high school students only. Middle and Elementary
-           School students are given a gpa value of 'NA'"""
+           School students are given a gpa value of None"""
 
-        if school_type == 'High':
+        if 9 in grade_range:  # if 9 in grade range then its a high school
             return randint(50, 101)
         else:
-            return 'NA'
+            return None
 
 
 class School(object):
-    """Create school name and teachers and students for the school"""
+    """Create school name, teachers and students for the school"""
+
+    grade_ranges = {'Elementary': ['K', 1, 2, 3, 4, 5],
+                    'Middle': [6, 7, 8],
+                    'High': [9, 10, 11, 12]}
 
     def __init__(self):
-        school_types = ['Elementary', 'High', 'Middle']
-        self.school_type = choice(school_types)
+        self.school_type = choice(list(self.grade_ranges))
+        self.grade_range = self.grade_ranges[self.school_type]
         self.school_name = FAKE.street_name() + " " + self.school_type
-        # create student instance to mint more instances from
+
+        # create student instance to mint more instances of itself
         __student_instance = Student()
-        self.students = __student_instance.create_students(self.school_type)
-        # create teacher instance to mint more instances from
+        self.students = __student_instance.create_students(self.grade_range)
+        self.students_by_grade = self.get_students_by_grade()
+
+        # create teacher instance to mint more instances of itself
         __teacher_instance = Teacher()
         self.teachers = __teacher_instance.create_teachers(self.students)
+
+    def get_students_by_grade(self, grade_default=None):
+        """Get a dict of students by their grades. If no keyword arg is given
+           then a list of students is created for every grade in the school.
+           The keyword argument accepts a single grade and produces a list
+           of students just for that grade."""
+        by_grade = {}
+        if grade_default is None:
+            for grade in self.grade_range:
+                names = self.student_names_by_grade(grade)
+                by_grade[grade] = names
+            return by_grade
+
+        else:
+            by_grade = {grade_default:
+                        self.student_names_by_grade(grade_default)}
+            return by_grade
+
+    def student_names_by_grade(self, grade):
+        names = []
+        for name in self.students:
+            g = self.students[name]['grade']
+            if g == grade:
+                names.append(name)
+        return names
+
+    def assign_students_to_teachers(self):
+        teacher_count = []
