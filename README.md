@@ -25,3 +25,13 @@ Dictionary of students at the school
 
 Dictionary of teachers at the school
 `myschool.teachers`
+
+A list of the grades taught at the school
+`myschool.grade_range`
+
+A dictionary that contains lists of all the students in each grade. Key is the
+grade, and value is a list of students for each grade
+`myschool.students_by_grade`
+
+Return a list of students for a given grade 
+`myschool.get_students_by_grade(9)`

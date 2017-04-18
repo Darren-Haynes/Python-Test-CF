@@ -132,9 +132,7 @@ class School(object):
             return by_grade
 
         else:
-            by_grade = {grade_default:
-                        self.student_names_by_grade(grade_default)}
-            return by_grade
+            return self.student_names_by_grade(grade_default)
 
     def student_names_by_grade(self, grade):
         names = []
@@ -143,6 +141,3 @@ class School(object):
             if g == grade:
                 names.append(name)
         return names
-
-    def assign_students_to_teachers(self):
-        teacher_count = []
