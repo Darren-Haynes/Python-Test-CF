@@ -38,8 +38,9 @@ class Student(Person):
         """Create dictionary that contains students age and gpa.
         """
         info = {}
-        info['Age'] = self.student_age()
+        info['age'] = self.student_age()
         info['gpa'] = self.gpa()
+        info['grade'] = self.grade
         return info
 
     def gpa(self):
@@ -119,6 +120,23 @@ class School (object):
         self.school = {self.school_name: self._create_teachers()}
         self.teachers = self._teachers_names()
         self.students = self._students_names()
+        self.teachers_info = self._teachers_info()
+        self.students_info = self._students_info()
+
+    def _teachers_info(self):
+        """Returns dict of all teachers and their info.
+        """
+        return self.school[self.school_name]
+
+    def _students_info(self):
+        """Returns dict of all students and their info.
+        """
+        data = {}
+        for teacher in self.teachers:
+            students = self.teachers_info[teacher]['Students']
+            data.update(students)
+
+        return data
 
     def _teachers_names(self):
         """Return list of teachers names
