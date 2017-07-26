@@ -1,4 +1,3 @@
-
 """
 This module creates a school. The school is given a name plus students and
 teachers that are members of that school.
@@ -6,11 +5,10 @@ teachers that are members of that school.
 Note the python Faker Module is used for generating fake info for the school
 and its teachers and students.
 
-Designed for Python 3 and Python 2 compatability
+Designed for Python 3 and Legacy Python compatability
 """
 
-from random import choice
-from random import randint
+from random import choice, randint
 from faker import Faker
 
 FAKE = Faker()
@@ -19,130 +17,146 @@ FAKE = Faker()
 class Person(object):
     """Top level hierarchy for subclasses Teacher() and Student()."""
 
-    def create_name(self):
+    @staticmethod
+    def fake_name():
         """Create a fake persons name"""
-        first = FAKE.first_name()
-        last = FAKE.last_name()
-        return first + " " + last
 
-
-class Teacher(Person):
-    """Create teachers for the school"""
-
-    def create_teachers(self, students):
-        """Create 1 teacher for every 10 students in each grade"""
-
-        teacher_grade = self.__grades_for_creating_teachers(students)
-        teachers = {}
-        # Create 1 teacher for every 10 students of each grade
-        for grade in teacher_grade:
-            num_of_teachers = teacher_grade[grade] // 10 + 1
-            for _ in range(1, num_of_teachers + 1):
-                teacher = Teacher()
-                teachers[teacher.create_name()] = {'grade': grade}
-        return teachers
-
-    def __grades_for_creating_teachers(self, students):
-        """Before actually creating teachers for students, we need to count
-           how many students are in each grade. Each teacher teaches a
-           specific grade, so we need these numbers"""
-
-        # key is the grade, value is how many students for each grade
-        count = {}
-        for value in students.values():
-            k = value['grade']
-            count[k] = count.get(value['grade'], 0) + 1
-        return count
+        return(FAKE.first_name() + " " + FAKE.last_name())
 
 
 class Student(Person):
-    """Create students for the school"""
 
-    def create_students(self, grade_range):
-        """Use Student() class to create a random number of students"""
+    """Create Students. """
+
+    def __init__(self, grade):
+        """Create students name, grade and info. """
+        self.name = self.fake_name()
+        self.grade = grade
+        self.student_info = self._student_info()
+
+    def _student_info(self):
+        """Create dictionary that contains students age and gpa.
+        """
+        info = {}
+        info['Age'] = self.student_age()
+        info['gpa'] = self.gpa()
+        return info
+
+    def gpa(self):
+        """Create gpa for grades 9 and above. No gpa for grades below 9.
+        """
+        if self.grade < 9:
+            return None
+        if self.grade == 'K':
+            return None
+        else:
+            return randint(51, 100)
+
+    def student_age(self):
+        """Assign student an age based on their school grade.
+        """
+        grade_age = randint(5, 6)
+        if self.grade == 'K':
+            return grade_age
+        else:
+            return self.grade + grade_age
+
+
+class Teacher(Person):
+
+    """Create a Teacher. """
+
+    def __init__(self, school_size, grade):
+        """Instantiatie teachers name, grade, size of school taught in.
+           Plus other info
+        """
+        self.name = self.fake_name()
+        self.school_size = school_size
+        self.grade = grade
+        self.teacher_info = self._teacher_info()
+
+    def _teacher_info(self):
+        """Create dictionary containing teacher's teaching grade, age and
+           students.
+        """
+        info = {}
+        info['Grade'] = self.grade
+        info['Age'] = randint(21, 65)
+        info['Students'] = self._create_students()
+
+        return info
+
+    def _create_students(self):
+        """Create 7 - 10 students per teacher.
+        """
+        students_per_teacher = randint(7, 10)
         students = {}
-        student_num = randint(100, 601)
-        for _ in range(1, student_num + 1):
-            student = self.__no_duplicate_students(students)
-            name = student.create_name()
-            grade = self.create_grade(grade_range)
-            gpa = self.create_gpa(grade_range)
-            students[name] = {'grade': grade, 'gpa': gpa}
+        for _ in range(students_per_teacher):
+            student = Student(self.grade)
+            students[student.name] = student.student_info
+
         return students
 
-    def __no_duplicate_students(self, students):
-        """ Recursive function that tests if student already exists in
-            'student' dictionary. If so then that student is not returned and
-            a new one created. This is to stop a duplicate student name
-            overriding an existing entry in dictionary 'students'. Such an
-            override reduces the number of students in 'students' and this
-            creates a disparity between the 'self.num_of_students' and actual
-            num of students in 'students' dictionary."""
-        student = Student()
-        if student.create_name() in students:
-            return self.__no_duplicate_students(students)
-        else:
-            return student
 
-    def create_grade(self, grade_range):
-        """ Returns random grade to assign to student"""
-        return (choice(grade_range))
+class School (object):
 
-    def create_gpa(self, grade_range):
-        """Assign gpa to high school students only. Middle and Elementary
-           School students are given a gpa value of None"""
-
-        if 9 in grade_range:  # if 9 in grade range then its a high school
-            return randint(50, 101)
-        else:
-            return None
-
-
-class School(object):
-    """Create school name, teachers and students for the school"""
+    """Create a School consisting of School name, school type, school size,
+       teachers and students. All this data is stored in a dictionary.
+    """
 
     grade_ranges = {'Elementary': ['K', 1, 2, 3, 4, 5],
                     'Middle': [6, 7, 8],
                     'High': [9, 10, 11, 12]}
 
     def __init__(self):
+        """Instatiate school type and size to get things rolling.
+           'self.school' is a dict that contains all the data for the school.
+        """
+
         self.school_type = choice(list(self.grade_ranges))
-        self.grade_range = self.grade_ranges[self.school_type]
-        self.school_name = FAKE.street_name() + " " + self.school_type
+        self.school_size = choice(['small', 'medium', 'large'])
+        self.school = {self._create_school_name(): self._create_teachers()}
 
-        # create student instance to mint more instances of itself
-        __student_instance = Student()
-        self.students = __student_instance.create_students(self.grade_range)
-        self.students_by_grade = self.get_students_by_grade()
+    def _create_school_name(self):
+        """Create fake name for the school.
+        """
 
-        # create teacher instance to mint more instances of itself
-        __teacher_instance = Teacher()
-        self.teachers = __teacher_instance.create_teachers(self.students)
+        self.school_name = FAKE.street_name() + " " + self.school_type \
+            + " School"
+        return(self.school_name)
 
-    def get_students_by_grade(self, grade_default=None):
-        """Get a dict of students by their grades. If no keyword arg is given
-           then a list of students is created for every grade in the school.
-           The keyword argument accepts a single grade and produces a list
-           of students just for that grade."""
-        by_grade = {}
-        if grade_default is None:
-            for grade in self.grade_range:
-                names = self.student_names_by_grade(grade)
-                by_grade[grade] = names
-            return by_grade
+    def _create_teachers(self):
+        """Create teachers for each grade of the school.
+        """
 
+        teachers = {}
+        for grade in self.grade_ranges[self.school_type]:
+            for _ in range(self._teachers_per_grade()):
+                teacher = Teacher(self.school_size, grade)
+                teachers[teacher.name] = teacher.teacher_info
+
+        return(teachers)
+
+    def _teachers_per_grade(self):
+        """Create a controlled random number of teachers per grade base on
+           the size of the school (small, medium or large).
+        """
+        if self.school_size == 'small':
+            min_teacher = 3
+            max_teacher = 5
+        elif self.school_size == 'medium':
+            min_teacher = 6
+            max_teacher = 8
         else:
-            by_grade = {grade_default:
-                        self.student_names_by_grade(grade_default)}
-            return by_grade
+            min_teacher = 9
+            max_teacher = 12
 
-    def student_names_by_grade(self, grade):
-        names = []
-        for name in self.students:
-            g = self.students[name]['grade']
-            if g == grade:
-                names.append(name)
-        return names
+        upper = randint(min_teacher, max_teacher)
+        return upper
 
-    def assign_students_to_teachers(self):
-        teacher_count = []
+    def __str__(self):
+        return(str(self.school))
+
+
+# school = School()
+# print(school)
