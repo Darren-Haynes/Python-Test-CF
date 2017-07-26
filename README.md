@@ -28,3 +28,9 @@ List of students names at the school
 
 List of teachers names at the school
 `myschool.teachers`
+
+Dict of teacher plus their info (name, students, age, etc)
+`myschool.teachers_info`
+
+Dict of students plus their info (name, students, age, etc)
+`myschool.students_info`
