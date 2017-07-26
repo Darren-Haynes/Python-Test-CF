@@ -11,6 +11,9 @@ You now have a school with students and teachers. The school randomly creates a 
 
 ### Use the following commands to get information about the school:
 
+Dict containing all data about school
+`myschool.school`
+
 School name
 `myschool.school_name`
 
@@ -20,8 +23,8 @@ Type of school
 Num of students at school
 `myschool.student_num`
 
-Dictionary of students at the school
+List of students names at the school
 `myschool.students`
 
-Dictionary of teachers at the school
+List of teachers names at the school
 `myschool.teachers`
