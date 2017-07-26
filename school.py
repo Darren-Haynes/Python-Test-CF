@@ -45,9 +45,9 @@ class Student(Person):
     def gpa(self):
         """Create gpa for grades 9 and above. No gpa for grades below 9.
         """
-        if self.grade < 9:
-            return None
         if self.grade == 'K':
+            return None
+        if self.grade < 9:
             return None
         else:
             return randint(51, 100)
@@ -104,33 +104,51 @@ class School (object):
        teachers and students. All this data is stored in a dictionary.
     """
 
-    grade_ranges = {'Elementary': ['K', 1, 2, 3, 4, 5],
-                    'Middle': [6, 7, 8],
-                    'High': [9, 10, 11, 12]}
+    _grade_ranges = {'Elementary': ['K', 1, 2, 3, 4, 5],
+                     'Middle':     [6, 7, 8],
+                     'High':       [9, 10, 11, 12]}
 
     def __init__(self):
-        """Instatiate school type and size to get things rolling.
+        """Instatiate school type, name and size to get things rolling.
            'self.school' is a dict that contains all the data for the school.
         """
 
-        self.school_type = choice(list(self.grade_ranges))
+        self.school_type = choice(list(self._grade_ranges))
+        self.school_name = self._create_school_name()
         self.school_size = choice(['small', 'medium', 'large'])
-        self.school = {self._create_school_name(): self._create_teachers()}
+        self.school = {self.school_name: self._create_teachers()}
+        self.teachers = self._teachers_names()
+        self.students = self._students_names()
+
+    def _teachers_names(self):
+        """Return list of teachers names
+        """
+        return list(self.school[self.school_name])
+
+    def _students_names(self):
+        """ Return list of students names
+        """
+        students = []
+        for teacher in self.teachers:
+            students.extend(list(self.school[self.school_name]
+                                            [teacher]['Students']))
+
+        return students
 
     def _create_school_name(self):
         """Create fake name for the school.
         """
 
-        self.school_name = FAKE.street_name() + " " + self.school_type \
+        name = FAKE.street_name() + " " + self.school_type \
             + " School"
-        return(self.school_name)
+        return(name)
 
     def _create_teachers(self):
         """Create teachers for each grade of the school.
         """
 
         teachers = {}
-        for grade in self.grade_ranges[self.school_type]:
+        for grade in self._grade_ranges[self.school_type]:
             for _ in range(self._teachers_per_grade()):
                 teacher = Teacher(self.school_size, grade)
                 teachers[teacher.name] = teacher.teacher_info
@@ -138,7 +156,7 @@ class School (object):
         return(teachers)
 
     def _teachers_per_grade(self):
-        """Create a controlled random number of teachers per grade base on
+        """Create a controlled random number of teachers per grade based on
            the size of the school (small, medium or large).
         """
         if self.school_size == 'small':
@@ -156,7 +174,3 @@ class School (object):
 
     def __str__(self):
         return(str(self.school))
-
-
-# school = School()
-# print(school)
