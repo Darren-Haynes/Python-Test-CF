@@ -41,6 +41,7 @@ class Student(Person):
         info['age'] = self.student_age()
         info['gpa'] = self.gpa()
         info['grade'] = self.grade
+
         return info
 
     def gpa(self):
@@ -104,10 +105,10 @@ class School (object):
     """Create a School consisting of School name, school type, school size,
        teachers and students. All this data is stored in a dictionary.
     """
-
-    _grade_ranges = {'Elementary': ['K', 1, 2, 3, 4, 5],
-                     'Middle':     [6, 7, 8],
-                     'High':       [9, 10, 11, 12]}
+    _grade_ranges = {'High':       [9, 10, 11, 12]}
+    # _grade_ranges = {'Elementary': ['K', 1, 2, 3, 4, 5],
+                     # 'Middle':     [6, 7, 8],
+                     # 'High':       [9, 10, 11, 12]}
 
     def __init__(self):
         """Instatiate school type, name and size to get things rolling.
@@ -122,6 +123,7 @@ class School (object):
         self.students = self._students_names()
         self.teachers_info = self._teachers_info()
         self.students_info = self._students_info()
+        self.students_gpa = self._get_gpa()
 
     def _teachers_info(self):
         """Returns dict of all teachers and their info.
@@ -189,6 +191,36 @@ class School (object):
 
         upper = randint(min_teacher, max_teacher)
         return upper
+
+    def _get_gpa(self):
+        """Elementary and Middle schools don't have gpa scores, so 'None' is
+           returned. For high school a dict is returned student:gpa
+        """
+        gpas = {}
+        if self.school_type == "Elementary" or self.school_type == "Middle":
+            return None
+        else:
+            for student in self.students_info:
+                gpa = self.students_info[student]['gpa']
+                gpas[student] = gpa
+
+        return gpas
+
+    def gpa_above(self, score):
+        """Get the name of students and their GPA, if GPA higher than 'score'
+           parameter.
+        """
+        if not self.students_gpa:
+            print("Gpa's not available for {} schools.".format(
+                                                    self.school_type))
+            return None
+
+        if len([self.students_gpa[gpa] for gpa in self.students_gpa]) == 0:
+            print("No student has a GPA over {}.".format(score))
+            return False
+        else:
+            return {student: gpa for student, gpa in self.students_gpa.items()
+                    if gpa > score}
 
     def __str__(self):
         return(str(self.school))
