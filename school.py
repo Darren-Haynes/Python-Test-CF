@@ -208,16 +208,20 @@ class School (object):
 
     def gpa_above(self, score):
         """Get the name of students and their GPA, if GPA higher than 'score'
-           parameter.
+           parameter. Return
         """
+
+        # Middle and elementary schools have no gpa. Return None
         if not self.students_gpa:
             print("Gpa's not available for {} schools.".format(
                                                     self.school_type))
             return None
 
+        # If no gpa above 'score' parameter then return False
         if len([self.students_gpa[gpa] for gpa in self.students_gpa]) == 0:
             print("No student has a GPA over {}.".format(score))
             return False
+        # Return students names and their gpa if above 'score' parameter
         else:
             return {student: gpa for student, gpa in self.students_gpa.items()
                     if gpa > score}
