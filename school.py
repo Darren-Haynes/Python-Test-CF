@@ -25,7 +25,6 @@ class Person(object):
 
 
 class Student(Person):
-
     """Create Students. """
 
     def __init__(self, grade):
@@ -65,7 +64,6 @@ class Student(Person):
 
 
 class Teacher(Person):
-
     """Create a Teacher. """
 
     def __init__(self, school_size, grade):
@@ -101,7 +99,6 @@ class Teacher(Person):
 
 
 class School (object):
-
     """Create a School consisting of School name, school type, school size,
        teachers and students. All this data is stored in a dictionary.
     """
@@ -194,8 +191,8 @@ class School (object):
 
     def _get_gpa(self):
         """Elementary and Middle schools don't have gpa scores, so 'None' is
-           returned. For high school a dict is returned student:gpa
-        """
+           returned. For high school a dict is returned student:gpa."""
+
         gpas = {}
         if self.school_type == "Elementary" or self.school_type == "Middle":
             return None
@@ -207,9 +204,9 @@ class School (object):
         return gpas
 
     def gpa_above(self, score):
-        """Get the name of students and their GPA, if GPA higher than 'score'
-           parameter. Return
-        """
+        """Get the name of students and their GPA if GPA higher than 'score'
+           parameter. Return False if no GPA higher than 'score'. Return None
+           for Elementary and middle schools."""
 
         # Middle and elementary schools have no gpa. Return None
         if not self.students_gpa:
@@ -218,13 +215,58 @@ class School (object):
             return None
 
         # If no gpa above 'score' parameter then return False
-        if len([self.students_gpa[gpa] for gpa in self.students_gpa]) == 0:
+        gpas = any(gpa > score for gpa in list(self.students_gpa.values()))
+        if not gpas:
             print("No student has a GPA over {}.".format(score))
             return False
         # Return students names and their gpa if above 'score' parameter
         else:
             return {student: gpa for student, gpa in self.students_gpa.items()
                     if gpa > score}
+
+    def gpa_below(self, score):
+        """Get the name of students and their GPA if GPA less than 'score'
+           parameter. Return False if no GPA less than 'score'. Return None
+           for Elementary and middle schools."""
+
+        # Middle and elementary schools have no gpa. Return None
+        if not self.students_gpa:
+            print("Gpa's not available for {} schools.".format(
+                                                    self.school_type))
+            return None
+
+        # If no gpa below 'score' parameter then return False
+        gpas = any(gpa < score for gpa in list(self.students_gpa.values()))
+        if not gpas:
+            print("No student has a GPA below {}.".format(score))
+            return False
+        # Return students names and their gpa if below 'score' parameter
+        else:
+            return {student: gpa for student, gpa in self.students_gpa.items()
+                    if gpa < score}
+
+    def gpa_between(self, gpa_min, gpa_max):
+        """Get the name of students and their GPA if GPA between 'gpa_min' and
+           'gpa_max' parameters. Return False if no GPA between this range.
+           Return None for Elementary and middle schools."""
+
+        # Middle and elementary schools have no gpa. Return None
+        if not self.students_gpa:
+            print("Gpa's not available for {} schools.".format(
+                                                    self.school_type))
+            return None
+
+        # If no gpa below 'score' parameter then return False
+        gpas = any(gpa > gpa_min and gpa < gpa_max for gpa in list(
+                                                self.students_gpa.values()))
+        if not gpas:
+            print("No student has a GPA between {} and {}.".format(
+                                                            gpa_min, gpa_max))
+            return False
+        # Return students names and their gpa if below 'score' parameter
+        else:
+            return {student: gpa for student, gpa in self.students_gpa.items()
+                    if gpa > gpa_min and gpa < gpa_max}
 
     def __str__(self):
         return(str(self.school))
