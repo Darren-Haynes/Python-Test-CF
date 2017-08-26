@@ -34,3 +34,12 @@ Dict of teacher plus their info (name, students, age, etc)
 
 Dict of students plus their info (name, students, age, etc)
 `myschool.students_info`
+
+List all students with a gpa above given parameter
+`myschool.gpa_above(80)`
+
+List all students with a gpa below given parameter
+`myschool.gpa_below(70)`
+
+List teachers in order of the average gpa performance of their students
+`myschool.teacher_performance()`
