@@ -10,6 +10,7 @@ Designed for Python 3 and Legacy Python compatability
 
 from random import choice, randint
 from faker import Faker
+from numpy import mean
 
 FAKE = Faker()
 
@@ -267,6 +268,26 @@ class School (object):
         else:
             return {student: gpa for student, gpa in self.students_gpa.items()
                     if gpa > gpa_min and gpa < gpa_max}
+
+    def teacher_performance(self):
+        """Print teachers in order of average gpa score of all their students.
+           students gpa scores."""
+
+        averages = {}
+        for teacher in self.teachers:
+            # get inner dictionary of a teachers students
+            teachers_students = self.school.get(
+                self.school_name).get(teacher).get('Students')
+
+            gpas = [x['gpa'] for x in teachers_students.values()]
+            average = mean(gpas)
+            averages[teacher] = average
+
+        teacher_sort = sorted(averages.items(), key=lambda x: x[1],
+                              reverse=True)
+
+        for results in teacher_sort:
+            print("{0}: {1:.1f}".format(*results))
 
     def __str__(self):
         return(str(self.school))
