@@ -276,10 +276,9 @@ class School (object):
         averages = {}
         for teacher in self.teachers:
             # get inner dictionary of a teachers students
-            teachers_students = self.school.get(
-                self.school_name).get(teacher).get('Students')
+            a_teachers_students = self.teachers_info.get(teacher).get('Students')
 
-            gpas = [x['gpa'] for x in teachers_students.values()]
+            gpas = [x['gpa'] for x in a_teachers_students.values()]
             average = mean(gpas)
             averages[teacher] = average
 
