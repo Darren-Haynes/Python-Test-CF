@@ -41,5 +41,8 @@ List all students with a gpa above given parameter
 List all students with a gpa below given parameter
 `myschool.gpa_below(70)`
 
+List all students with a gpa between two given parameter
+`myschool.gpa_below(94, 101)`
+
 List teachers in order of the average gpa performance of their students
 `myschool.teacher_performance()`
