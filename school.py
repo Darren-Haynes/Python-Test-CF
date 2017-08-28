@@ -103,7 +103,10 @@ class School (object):
     """Create a School consisting of School name, school type, school size,
        teachers and students. All this data is stored in a dictionary.
     """
-    _grade_ranges = {'Elementary': ['K', 1, 2, 3, 4, 5],
+    # _grade_ranges = {'High':       [9, 10, 11, 12]}
+    # _grade_ranges = {'Middle':     [6, 7, 8]}
+    # _grade_ranges = {'Elementary':   [9, 10, 11, 12]}
+    _grade_ranges = {'Elementary': [9, 10, 11, 12],
                      'Middle':     [6, 7, 8],
                      'High':       [9, 10, 11, 12]}
 
@@ -112,90 +115,95 @@ class School (object):
            'self.school' is a dict that contains all the data for the school.
         """
 
-uchool_type = choice(list(self._grade_ranges))
-uchool_name = self._create_school_name()
-uchool_size = choice(['small', 'medium', 'large'])
-uchool = {self.school_name: self._create_teachers()}
-ueachers = self._teachers_names()
-utudents = self._students_names()
-ueachers_info = self._teachers_info()
-utudents_info = self._students_info()
-utudents_gpa = self._get_gpa()
-u
-uers_info(self):
-uurns dict of all teachers and their info.
-u
-u self.school[self.school_name]
-u
-unts_info(self):
-uurns dict of all students and their info.
-u
-u {}
-uacher in self.teachers:
-uudents = self.teachers_info[teacher]['Students']
-uta.update(students)
-u
-u data
-u
-uers_names(self):
-uurn list of teachers names
-u
-u list(self.school[self.school_name])
-u
-unts_names(self):
-uturn list of students names
-u
-uts = []
-uacher in self.teachers:
-uudents.extend(list(self.school[self.school_name]
-u                              [teacher]['Students']))
-u
-u students
-u
-ue_school_name(self):
-uate fake name for the school.
-u
-u
-u FAKE.street_name() + " " + self.school_type \
-u" School"
-u(name)
-u
-ue_teachers(self):
-uate teachers for each grade of the school.
-u
-u
-urs = {}
-uade in self._grade_ranges[self.school_type]:
-ur _ in range(self._teachers_per_grade()):
-u  teacher = Teacher(self.school_size, grade)
-u  teachers[teacher.name] = teacher.teacher_info
-u
-u(teachers)
-u
-uers_per_grade(self):
-uate a controlled random number of teachers per grade based on
-u size of the school (small, medium or large).
-u
-uf.school_size == 'small':
-un_teacher = 3
-ux_teacher = 5
-uelf.school_size == 'medium':
-un_teacher = 6
-ux_teacher = 8
-u
+        self.school_type = choice(list(self._grade_ranges))
+        self.school_name = self._create_school_name()
+        self.school_size = choice(['small', 'medium', 'large'])
+        self.school = {self.school_name: self._create_teachers()}
+        self.teachers = self._teachers_names()
+        self.students = self._students_names()
+        self.teachers_info = self._teachers_info()
+        self.students_info = self._students_info()
+        self.students_gpa = self._get_gpa()
+
+    def _teachers_info(self):
+        """Returns dict of all teachers and their info.
+        """
+        return self.school[self.school_name]
+
+    def _students_info(self):
+        """Returns dict of all students and their info.
+        """
+        data = {}
+        for teacher in self.teachers:
+            students = self.teachers_info[teacher]['Students']
+            data.update(students)
+
+        return data
+
+    def _teachers_names(self):
+        """Return list of teachers names
+        """
+        return list(self.school[self.school_name])
+
+    def _students_names(self):
+        """ Return list of students names
+        """
+        students = []
+        for teacher in self.teachers:
+            students.extend(list(self.school[self.school_name]
+                                            [teacher]['Students']))
+
+        return students
+
+    def _create_school_name(self):
+        """Create fake name for the school.
+        """
+
+        name = FAKE.street_name() + " " + self.school_type \
+            + " School"
+        return(name)
+
+    def _create_teachers(self):
+        """Create teachers for each grade of the school.
+        """
+
+        teachers = {}
+        for grade in self._grade_ranges[self.school_type]:
+            for _ in range(self._teachers_per_grade()):
+                teacher = Teacher(self.school_size, grade)
+                teachers[teacher.name] = teacher.teacher_info
+
+        return(teachers)
+
+    def _teachers_per_grade(self):
+        """Create a controlled random number of teachers per grade based on
+           the size of the school (small, medium or large).
+        """
+        if self.school_size == 'small':
+            min_teacher = 3
+            max_teacher = 5
+        elif self.school_size == 'medium':
+            min_teacher = 6
+            max_teacher = 8
+        else:
             min_teacher = 9
             max_teacher = 12
 
         upper = randint(min_teacher, max_teacher)
         return upper
 
+    def _not_high_school(self):
+        """Just a print statement for those trying to access GPA information
+           for Elementary and Middle schools."""
+
+        print("Note that Gpa scores are not available for {} schools.".format(
+            self.school_type))
+
     def _has_gpa(self):
-        """ Only High School students have GPA scores. Return true if school is
-            a high school, otherwise False."""
+        """Elementary and Middle schools don't have gpa scores, thus return
+           'False'. Else return 'True' for High Schools"""
 
         if self.school_type == "Elementary" or self.school_type == "Middle":
-            print("Gpa's not available for {} schools.".format(
-                                                    self.school_type))
             return False
         else:
             return True
@@ -204,7 +212,8 @@ u
         """Elementary and Middle schools don't have gpa scores, so 'None' is
            returned. For high school a dict is returned student:gpa."""
 
-        if not self._has_gpa:
+        if not self._has_gpa():
+            self._not_high_school()
             return None
         else:
             gpas = {}
@@ -221,6 +230,7 @@ u
 
         # Middle and elementary schools have no gpa. Return None
         if not self._has_gpa():
+            self._not_high_school()
             return None
 
         # If no gpa above 'score' parameter then return False
@@ -240,6 +250,7 @@ u
 
         # Middle and elementary schools have no gpa. Return None
         if not self._has_gpa():
+            self._not_high_school()
             return None
 
         # If no gpa below 'score' parameter then return False
@@ -259,6 +270,7 @@ u
 
         # Middle and elementary schools have no gpa. Return None
         if not self._has_gpa():
+            self._not_high_school()
             return None
 
         # If no gpa below 'score' parameter then return False
@@ -273,41 +285,29 @@ u
             return {student: gpa for student, gpa in self.students_gpa.items()
                     if gpa > gpa_min and gpa < gpa_max}
 
-    def teacher_gpa_averages(self):
+    def teacher_performance(self):
         """Print teachers in order of average gpa score of all their students.
-           students scores."""
+           students gpa scores."""
 
         if not self._has_gpa():
+            self._not_high_school()
             return None
 
         averages = {}
         for teacher in self.teachers:
             # get inner dictionary of a teachers students
-            a_teachers_students = self.teachers_info.get(teacher).get(
-                'Students')
+            a_teachers_students = self.teachers_info.get(
+                teacher).get('Students')
 
-            gpas = [student['gpa'] for student in a_teachers_students.values()]
+            gpas = [x['gpa'] for x in a_teachers_students.values()]
             average = mean(gpas)
-            averages[teacher] = round(average, 2)
+            averages[teacher] = average
 
-        return averages
-
-    def teacher_performance(self):
-        """Print teachers in order of average gpa score (highest first) of all
-           their students gpa scores."""
-
-        if not self._has_gpa():
-            return None
-
-        averages = self.teacher_gpa_averages()
         teacher_sort = sorted(averages.items(), key=lambda x: x[1],
                               reverse=True)
 
         for results in teacher_sort:
             print("{0}: {1:.1f}".format(*results))
-
-    # def teacher_performance_below(self):
-        # """
 
     def __str__(self):
         return(str(self.school))
