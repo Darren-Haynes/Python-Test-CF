@@ -99,23 +99,16 @@ class Teacher(Person):
         return students
 
 
-class School (object):
+class School(object):
     """Create a School consisting of School name, school type, school size,
        teachers and students. All this data is stored in a dictionary.
     """
-    # _grade_ranges = {'High':       [9, 10, 11, 12]}
-    # _grade_ranges = {'Middle':     [6, 7, 8]}
-    # _grade_ranges = {'Elementary':   [9, 10, 11, 12]}
-    _grade_ranges = {'Elementary': [9, 10, 11, 12],
-                     'Middle':     [6, 7, 8],
-                     'High':       [9, 10, 11, 12]}
 
     def __init__(self):
         """Instatiate school type, name and size to get things rolling.
            'self.school' is a dict that contains all the data for the school.
         """
 
-        self.school_type = choice(list(self._grade_ranges))
         self.school_name = self._create_school_name()
         self.school_size = choice(['small', 'medium', 'large'])
         self.school = {self.school_name: self._create_teachers()}
@@ -123,7 +116,6 @@ class School (object):
         self.students = self._students_names()
         self.teachers_info = self._teachers_info()
         self.students_info = self._students_info()
-        self.students_gpa = self._get_gpa()
 
     def _teachers_info(self):
         """Returns dict of all teachers and their info.
@@ -168,7 +160,7 @@ class School (object):
         """
 
         teachers = {}
-        for grade in self._grade_ranges[self.school_type]:
+        for grade in self.grade_ranges:
             for _ in range(self._teachers_per_grade()):
                 teacher = Teacher(self.school_size, grade)
                 teachers[teacher.name] = teacher.teacher_info
@@ -192,34 +184,28 @@ class School (object):
         upper = randint(min_teacher, max_teacher)
         return upper
 
-    def _not_high_school(self):
-        """Just a print statement for those trying to access GPA information
-           for Elementary and Middle schools."""
+    def __str__(self):
+        return(str(self.school))
 
-        print("Note that Gpa scores are not available for {} schools.".format(
-            self.school_type))
 
-    def _has_gpa(self):
-        """Elementary and Middle schools don't have gpa scores, thus return
-           'False'. Else return 'True' for High Schools"""
+class High_School(School):
+    """Create High School. Mainly adding GPA score data and methods."""
 
-        if self.school_type == "Elementary" or self.school_type == "Middle":
-            return False
-        else:
-            return True
+    grade_ranges = [9, 10, 11, 12]
+
+    def __init__(self):
+        self.school_type = "High"
+        School.__init__(self)
+        self.students_gpa = self._get_gpa()
 
     def _get_gpa(self):
         """Elementary and Middle schools don't have gpa scores, so 'None' is
            returned. For high school a dict is returned student:gpa."""
 
-        if not self._has_gpa():
-            self._not_high_school()
-            return None
-        else:
-            gpas = {}
-            for student in self.students_info:
-                gpa = self.students_info[student]['gpa']
-                gpas[student] = gpa
+        gpas = {}
+        for student in self.students_info:
+            gpa = self.students_info[student]['gpa']
+            gpas[student] = gpa
 
         return gpas
 
@@ -227,11 +213,6 @@ class School (object):
         """Get the name of students and their GPA if GPA higher than 'score'
            parameter. Return False if no GPA higher than 'score'. Return None
            for Elementary and middle schools."""
-
-        # Middle and elementary schools have no gpa. Return None
-        if not self._has_gpa():
-            self._not_high_school()
-            return None
 
         # If no gpa above 'score' parameter then return False
         gpas = any(gpa > score for gpa in list(self.students_gpa.values()))
@@ -248,11 +229,6 @@ class School (object):
            parameter. Return False if no GPA less than 'score'. Return None
            for Elementary and middle schools."""
 
-        # Middle and elementary schools have no gpa. Return None
-        if not self._has_gpa():
-            self._not_high_school()
-            return None
-
         # If no gpa below 'score' parameter then return False
         gpas = any(gpa < score for gpa in list(self.students_gpa.values()))
         if not gpas:
@@ -267,11 +243,6 @@ class School (object):
         """Get the name of students and their GPA if GPA between 'gpa_min' and
            'gpa_max' parameters. Return False if no GPA between this range.
            Return None for Elementary and middle schools."""
-
-        # Middle and elementary schools have no gpa. Return None
-        if not self._has_gpa():
-            self._not_high_school()
-            return None
 
         # If no gpa below 'score' parameter then return False
         gpas = any(gpa > gpa_min and gpa < gpa_max for gpa in list(
@@ -289,10 +260,6 @@ class School (object):
         """Print teachers in order of average gpa score of all their students.
            students gpa scores."""
 
-        if not self._has_gpa():
-            self._not_high_school()
-            return None
-
         averages = {}
         for teacher in self.teachers:
             # get inner dictionary of a teachers students
@@ -309,5 +276,35 @@ class School (object):
         for results in teacher_sort:
             print("{0}: {1:.1f}".format(*results))
 
-    def __str__(self):
-        return(str(self.school))
+
+class Middle_School(School):
+    """Create Middle school. Almost identical to Elementary school except for
+       'grade_ranges'. Unlike High school, Middle or Elementary schools do not
+       have data and methods regarding GPA scores."""
+
+    grade_ranges = [6, 7, 8]
+
+    def __init__(self):
+        self.school_type = "Middle"
+        School.__init__(self)
+
+
+class Elementary_School(School):
+    """Create Elementary school. Almost identical to middle school except for
+       'grade_ranges'. Unlike High school, Middle or Elementary schools do not
+       have data and methods regarding GPA scores."""
+
+    grade_ranges = ['K', 1, 2, 3, 4, 5]
+
+    def __init__(self):
+        self.school_type = "Elementary"
+        School.__init__(self)
+
+
+class Create_School(object):
+    """Create a school!"""
+
+    def __init__(self):
+        self.high = High_School()
+        self.middle = Middle_School()
+        self.elem = Elementary_School()
