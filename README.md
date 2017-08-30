@@ -1,15 +1,26 @@
 # Python Pretest for Code Fellows 401 Course
 
-### How to use this Module:
+### How to Create, Save and Open a School
 
 First import the module
-`from school import School()`
+`from school import Create_School`
 
 To create a school
-`myschool = School()`
-You now have a school with students and teachers. The school randomly creates a "High", "Middle" or "Elementary" school. The total number of students at the school are chosen from a random number between 100-600.
+`myschool = Create_School()`
+You now have a school with students and teachers. The school randomly creates a
+"High", "Middle" or "Elementary" school, and randomly creates the size of the
+school: 'small', 'medium' or 'large'. The size of the school determines how
+many teachers teach per grade; each teacher is randomly assigned 7-10 students.
+Other information about the school can be accessed as outlined in the
+methods/attributes section below.
 
-### Use the following commands to get information about the school:
+To save the school as a pickle file
+`myschool.save('name-of-file-to-save-to')`
+
+To open saved school into a variable
+`myschool = Create_School().open('saved-file')`
+
+### Use the following methods/attributes to get information about the school:
 
 Dict containing all data about school
 `myschool.school`
@@ -41,7 +52,7 @@ List all students with a gpa above given parameter
 List all students with a gpa below given parameter
 `myschool.gpa_below(70)`
 
-List all students with a gpa between two given parameter
+List all students with a gpa between two given parameters
 `myschool.gpa_below(94, 101)`
 
 List teachers in order of the average gpa performance of their students
