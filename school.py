@@ -8,9 +8,10 @@ and its teachers and students.
 Designed for Python 3 and Legacy Python compatability
 """
 
+from numpy import mean
+import pickle
 from random import choice, randint
 from faker import Faker
-from numpy import mean
 
 FAKE = Faker()
 
@@ -303,8 +304,17 @@ class Elementary_School(School):
 
 class Create_School(object):
     """Create a school!"""
+    schools = [High_School(), Middle_School(), Elementary_School()]
 
     def __init__(self):
-        self.high = High_School()
-        self.middle = Middle_School()
-        self.elem = Elementary_School()
+        self.school = choice(self.schools)
+
+    def save(self, fname):
+        with open(fname, 'wb') as f:
+            pickle.dump(Create_School().school, f)
+
+    @classmethod
+    def open(cls, fname):
+        with open(fname, 'rb') as f:
+            return(pickle.load(f))
+
