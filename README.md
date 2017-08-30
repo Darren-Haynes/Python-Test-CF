@@ -14,6 +14,12 @@ many teachers teach per grade; each teacher is randomly assigned 7-10 students.
 Other information about the school can be accessed as outlined in the
 methods/attributes section below.
 
+If you prefer to choose which school to create, then pass the type of school as
+a parameter when creating it
+`myschool = Create_School('High')` or
+`myschool = Create_School('Middle')` or
+`myschool = Create_School('Elementary')`
+
 To save the school as a pickle file
 `myschool.save('name-of-file-to-save-to')`
 

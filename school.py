@@ -306,15 +306,24 @@ class Create_School(object):
     """Create a school!"""
     schools = [High_School(), Middle_School(), Elementary_School()]
 
-    def __init__(self):
-        self.school = choice(self.schools)
+    def __init__(self, type_of_school=False):
+        if not type_of_school:
+            self.school = choice(self.schools)
+        elif type_of_school == "High":
+            self.school = High_School()
+        elif type_of_school == "Middle":
+            self.school = Middle_School()
+        elif type_of_school == "Elementary":
+            self.school = Elementary_School()
+        else:
+            print("Type of school not recognized")
 
     def save(self, fname):
         with open(fname, 'wb') as f:
             pickle.dump(Create_School().school, f)
 
-    @classmethod
-    def open(cls, fname):
+    @staticmethod
+    def open(fname):
         with open(fname, 'rb') as f:
             return(pickle.load(f))
 
